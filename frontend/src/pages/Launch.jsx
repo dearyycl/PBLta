@@ -38,7 +38,7 @@ export default function Launch() {
           {state.tableLocked && <p className="launch__meta">Meja <strong>{state.tableNumber}</strong></p>}
 
           <button type="button" className="btn btn--cream btn--xl" onClick={start}>
-            Mulai Pesan Dari Meja Anda
+            Mulai Pesan
           </button>
         </div>
       </div>

@@ -1,0 +1,84 @@
+/* Tab Kasir (POS) — memakai variabel warna dari styles.css */
+.pos { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); padding-bottom: 84px; }
+
+.pos__done {
+  grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 16px; border-radius: 14px; background: #e3f6ea; color: #14633a; border: 1px solid #b9e4c9;
+}
+
+/* ----- katalog ----- */
+.pos__catalog { min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+.pos__body { min-height: 0; flex: 1; display: flex; flex-direction: column; gap: 12px; }
+.pos__cats { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.pos__cats::-webkit-scrollbar { display: none; }
+.pos__cat {
+  flex: none; min-height: 42px; padding: 0 16px; border-radius: 12px; border: 1.5px solid var(--line);
+  background: #fff; font-weight: 700; font-size: .88rem; text-align: left; white-space: nowrap;
+}
+.pos__cat.is-active { background: var(--maroon); border-color: var(--maroon); color: #fff; }
+.pos__scroll { min-height: 0; min-width: 0; flex: 1; }
+.pos__group { margin-bottom: 18px; }
+.pos__group-title { font-size: 1rem; color: var(--maroon); margin-bottom: 8px; }
+.pos__group-title small { margin-left: 6px; font-size: .7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.pos__grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); }
+
+.pos-card {
+  display: flex; flex-direction: column; text-align: left; padding: 0; overflow: hidden;
+  border: 1px solid var(--line); border-radius: 14px; background: #fff; transition: box-shadow .2s, transform .08s;
+}
+.pos-card:hover:not(:disabled) { box-shadow: var(--shadow); }
+.pos-card:active:not(:disabled) { transform: scale(.98); }
+.pos-card__img { position: relative; aspect-ratio: 4 / 3; background: var(--maroon-soft); display: grid; place-items: center; font-size: 2rem; }
+.pos-card__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pos-card__name { padding: 8px 10px 0; font-weight: 700; font-size: .9rem; line-height: 1.25; min-height: 2.6em; }
+.pos-card__price { padding: 2px 10px 10px; font-weight: 800; color: var(--maroon); }
+.pos-card.is-soldout { opacity: .6; filter: grayscale(1); cursor: not-allowed; background: #f3f3f3; }
+.pos-card.is-soldout .badge-soldout { bottom: 6px; filter: none; z-index: 1; }
+
+/* ----- panel pesanan ----- */
+.pos__cart { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: 16px; min-height: 0; overflow: hidden; }
+.pos__cart-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 6px; }
+.pos__cart-head h2 { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+.pos__close { display: none; }
+.pos__fields { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; padding: 6px 16px 12px; border-bottom: 1px solid var(--line); }
+.pos__lines { list-style: none; margin: 0; padding: 0 16px; overflow-y: auto; flex: 1; min-height: 120px; }
+.pos__empty { padding: 24px 0; text-align: center; }
+.pos-line { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.pos-line__info { min-width: 0; display: grid; gap: 2px; justify-items: start; }
+.pos-line__name { font-weight: 700; }
+.pos-line__price { font-weight: 700; color: var(--maroon); }
+.pos-line__edit { border: 0; background: none; padding: 4px 0; color: var(--maroon); font-size: .82rem; font-weight: 600; text-decoration: underline; }
+.pos-line__side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex: none; }
+.pos-line__x { width: 28px; height: 28px; border-radius: 8px; border: 0; background: #fdeaea; color: var(--red); font-size: 1.1rem; line-height: 1; }
+.pos__foot { display: grid; gap: 10px; padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: #fff; }
+.pos__methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pos__method { min-height: 44px; border-radius: 12px; border: 1.5px solid var(--line); background: #fff; font-weight: 700; }
+.pos__method.is-on { border-color: var(--maroon); background: var(--maroon-soft); color: var(--maroon); }
+.pos__total { display: flex; justify-content: space-between; align-items: baseline; }
+.pos__total strong { font-size: 1.4rem; color: var(--maroon); }
+.pos__actions { display: flex; gap: 8px; }
+.pos__actions .btn--primary { min-height: 52px; }
+
+/* ----- layar kecil: panel pesanan jadi lembar penuh ----- */
+.pos__mobilebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, #faf7f6 30%); }
+.pos__mobilebar .btn { max-width: 560px; margin: 0 auto; display: flex; padding: 0 20px; }
+@media (max-width: 999px) {
+  .pos__cart {
+    position: fixed; inset: 0; z-index: 60; border-radius: 0; border: 0;
+    transform: translateY(100%); visibility: hidden; transition: transform .25s ease, visibility .25s;
+  }
+  .pos__cart.is-open { transform: none; visibility: visible; }
+  .pos__close { display: inline-grid; place-items: center; }
+}
+@media (max-width: 420px) { .pos__fields { grid-template-columns: 1fr; } }
+
+/* ----- layar lebar: split-screen ----- */
+@media (min-width: 1000px) {
+  .pos { grid-template-columns: minmax(0, 1fr) 390px; height: calc(100dvh - 200px); min-height: 540px; padding-bottom: 0; align-items: stretch; }
+  .pos__done { grid-column: 1 / -1; }
+  .pos__body { flex-direction: row; }
+  .pos__cats { flex-direction: column; overflow-x: visible; overflow-y: auto; width: 170px; flex: none; padding: 0 4px 0 0; }
+  .pos__cat { white-space: normal; }
+  .pos__scroll { overflow-y: auto; padding-right: 4px; }
+  .pos__mobilebar { display: none; }
+}

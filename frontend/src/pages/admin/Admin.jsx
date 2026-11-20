@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { api, getToken, setToken } from '../../lib/api.js';
 import Orders from './Orders.jsx';
+import Pos from './Pos.jsx';
 import MenuManager from './MenuManager.jsx';
 import Reports from './Reports.jsx';
 
 const TABS = [
   { id: 'orders', label: 'Pesanan Live' },
+  { id: 'pos', label: 'Kasir' },
   { id: 'menu', label: 'Kelola Menu' },
   { id: 'report', label: 'Laporan Keuangan' },
 ];
@@ -82,6 +84,7 @@ export default function Admin() {
       </nav>
       <main className="admin__body">
         {tab === 'orders' && <Orders onUnauthorized={onUnauthorized} />}
+        {tab === 'pos' && <Pos onUnauthorized={onUnauthorized} onGoOrders={() => setTab('orders')} />}
         {tab === 'menu' && <MenuManager onUnauthorized={onUnauthorized} />}
         {tab === 'report' && <Reports onUnauthorized={onUnauthorized} />}
       </main>

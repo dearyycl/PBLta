@@ -122,6 +122,57 @@ class AdminApiTest extends TestCase
             ->assertJsonCount(1, 'data.transactions');
     }
 
+    /* ---------- POS kasir ---------- */
+
+    public function test_pos_wajib_login(): void
+    {
+        $menu = $this->makeMenu();
+        $this->postJson('/api/admin/orders', $this->orderPayload($menu))->assertUnauthorized();
+    }
+
+    public function test_pos_order_langsung_lunas_masuk_antrean_dan_laporan(): void
+    {
+        $h = $this->auth();
+        $menu = $this->makeMenu(['price' => 30000]);
+
+        $this->postJson('/api/admin/orders', $this->orderPayload($menu, ['payment_method' => 'qris']), $h)
+            ->assertCreated()
+            ->assertJsonPath('data.status', 'paid')
+            ->assertJsonPath('data.kitchen_status', 'pending')
+            ->assertJsonPath('data.total_amount', 60000)
+            ->assertJsonPath('data.payment_method', 'qris');
+
+        $this->getJson('/api/admin/orders', $h)->assertJsonCount(1, 'data');
+        $this->getJson('/api/admin/reports', $h)
+            ->assertJsonPath('data.summary.total_revenue', 60000)
+            ->assertJsonPath('data.summary.by_method.qris', 60000);
+    }
+
+    public function test_pos_nama_dan_meja_kosong_diberi_default(): void
+    {
+        $h = $this->auth();
+        $menu = $this->makeMenu();
+        $payload = $this->orderPayload($menu, ['customer_name' => null, 'table_number' => '  ']);
+
+        $this->postJson('/api/admin/orders', $payload, $h)
+            ->assertCreated()
+            ->assertJsonPath('data.customer_name', 'Pelanggan')
+            ->assertJsonPath('data.table_number', 'Take Away');
+    }
+
+    public function test_pos_menolak_item_sold_out_dan_harga_dari_client_diabaikan(): void
+    {
+        $h = $this->auth();
+        $habis = $this->makeMenu(['is_available' => false]);
+        $this->postJson('/api/admin/orders', $this->orderPayload($habis), $h)->assertStatus(422);
+
+        $ok = $this->makeMenu(['name' => 'Espresso', 'price' => 20000]);
+        $payload = $this->orderPayload($ok);
+        $payload['items'][0]['price'] = 1;
+        $this->postJson('/api/admin/orders', $payload, $h)->assertCreated()->assertJsonPath('data.total_amount', 40000);
+        $this->assertDatabaseCount('orders', 1);
+    }
+
     public function test_laporan_validasi_rentang_tanggal(): void
     {
         $h = $this->auth();

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\OrderController;
 use App\Models\Order;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 
 class OrderAdminController extends Controller
@@ -20,6 +22,24 @@ class OrderAdminController extends Controller
             ->get();
 
         return response()->json(['data' => $orders->map->toApi()->values()]);
+    }
+
+    // POST /api/admin/orders — pesanan langsung di kasir (POS). Wajib login, langsung berstatus LUNAS.
+    public function store(Request $request, OrderService $service)
+    {
+        $data = $request->validate(array_merge(OrderController::rules(), [
+            'customer_name' => ['nullable', 'string', 'max:60'],
+            'table_number' => ['nullable', 'string', 'max:10'],
+            'payment_method' => ['required', 'in:cash,debit,qris'],
+        ]));
+
+        $data['customer_name'] = trim((string) ($data['customer_name'] ?? '')) ?: 'Pelanggan';
+        $data['table_number'] = trim((string) ($data['table_number'] ?? '')) ?: 'Take Away';
+
+        $built = $service->buildLines($data['items']); // harga tetap dihitung server
+        $order = $service->createOrder($data, $built['lines'], $built['total'], $data['payment_method'], 'paid');
+
+        return response()->json(['data' => $order->toApi()], 201);
     }
 
     // PATCH /api/admin/orders/{order}/status { kitchen_status }

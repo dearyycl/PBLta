@@ -28,6 +28,7 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/orders', [OrderAdminController::class, 'index']);
+    Route::post('/orders', [OrderAdminController::class, 'store']); // POS kasir
     Route::patch('/orders/{order}/status', [OrderAdminController::class, 'updateStatus']);
     Route::patch('/orders/{order}/paid', [OrderAdminController::class, 'markPaid']);
 

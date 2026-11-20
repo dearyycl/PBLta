@@ -52,6 +52,7 @@ export const api = {
   adminOrders: () => request('/admin/orders', { auth: true }),
   setOrderStatus: (id, kitchen_status) =>
     request(`/admin/orders/${id}/status`, { method: 'PATCH', body: { kitchen_status }, auth: true }),
+  posOrder: (payload) => request('/admin/orders', { method: 'POST', body: payload, auth: true }),
   markOrderPaid: (id) => request(`/admin/orders/${id}/paid`, { method: 'PATCH', body: {}, auth: true }),
   adminMenus: () => request('/admin/menus', { auth: true }),
   saveMenu: (id, formData) => {

@@ -43,18 +43,21 @@ function RadioGroup({ title, name, options, value, onChange }) {
   );
 }
 
-export default function CustomizeSheet({ menu, onClose, onAdd }) {
+// initial & submitLabel opsional (dipakai tab Kasir untuk mengubah item); halaman pelanggan tidak terpengaruh
+export default function CustomizeSheet({ menu, onClose, onAdd, initial = null, submitLabel = 'Add Orders' }) {
   const sugars = byType(menu, 'sugar');
   const ices = byType(menu, 'ice');
   const toppingOpts = byType(menu, 'topping');
 
   const defaultOf = (list) => list.find((o) => /^normal/i.test(o.name)) || null;
 
-  const [sugar, setSugar] = useState(defaultOf(sugars));
-  const [ice, setIce] = useState(defaultOf(ices));
-  const [toppingQty, setToppingQty] = useState({});
-  const [notes, setNotes] = useState('');
-  const [qty, setQty] = useState(1);
+  const [sugar, setSugar] = useState(initial ? initial.sugar ?? null : defaultOf(sugars));
+  const [ice, setIce] = useState(initial ? initial.ice ?? null : defaultOf(ices));
+  const [toppingQty, setToppingQty] = useState(() =>
+    Object.fromEntries((initial?.toppings || []).map((t) => [t.id, t.qty]))
+  );
+  const [notes, setNotes] = useState(initial?.notes ?? '');
+  const [qty, setQty] = useState(initial?.qty ?? 1);
 
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
@@ -149,7 +152,7 @@ export default function CustomizeSheet({ menu, onClose, onAdd }) {
             <button type="button" onClick={() => setQty((q) => q + 1)} aria-label="Tambah jumlah">+</button>
           </div>
           <button type="button" className="btn btn--primary btn--grow" onClick={submit}>
-            Add Orders - {formatRupiah(total)}
+            {submitLabel} - {formatRupiah(total)}
           </button>
         </div>
       </div>
